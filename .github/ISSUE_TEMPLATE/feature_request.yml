@@ -1,0 +1,49 @@
+---
+name: 功能或改进请求
+description: 提出新功能、能力或改进建议（mission、offboard、异常注入等）
+title: "[功能] 简述需求"
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: module
+    attributes:
+      label: 模块
+      multiple: true
+      options:
+        - 硬件
+        - 仿真
+        - 固件
+        - 参数
+        - 机载
+        - 其他
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 优先级
+      options:
+        - P2
+        - P1
+        - P0
+    validations:
+      required: true
+  - type: textarea
+    id: need
+    attributes:
+      label: 需求描述
+      description: 想实现什么、为什么（使用场景）
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收标准
+      description: 达成什么状态才算完成
+      value: |
+        - [ ] 
+  - type: input
+    id: related
+    attributes:
+      label: 关联
+      description: 相关 Issue / 测试记录 / Changelog

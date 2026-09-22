@@ -1,0 +1,93 @@
+---
+name: 问题报告
+description: 报告一个 bug 或异常现象（硬件 / 仿真 / 固件 / 参数 / 机载等）
+title: "[模块] 简述问题"
+labels: ["bug"]
+assignees: []
+body:
+  - type: input
+    id: report_time
+    attributes:
+      label: 上报时间
+      placeholder: YYYY-MM-DD HH:mm（不留则默认今天）
+    validations:
+      required: false
+  - type: dropdown
+    id: module
+    attributes:
+      label: 模块
+      description: 问题发生在哪一层
+      multiple: true
+      options:
+        - 硬件
+        - 仿真
+        - 固件
+        - 参数
+        - 机载
+        - 其他
+    validations:
+      required: true
+  - type: dropdown
+    id: env
+    attributes:
+      label: 环境
+      multiple: true
+      options:
+        - 真机
+        - SIH
+        - HIL
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: 固件版本
+      description: 如 fmt_sieon-s1.bin 或 commit、param.xml vN
+      placeholder: 若适用请填写
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 优先级
+      options:
+        - P2
+        - P1
+        - P0
+    validations:
+      required: true
+  - type: textarea
+    id: phenomenon
+    attributes:
+      label: 现象
+      description: 什么不正常，报错信息，观察到的行为
+      value: |
+        <!-- 描述现象 -->
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 按顺序描述可复现的步骤
+      placeholder: |
+        1.
+        2.
+        3.
+  - type: textarea
+    id: analysis
+    attributes:
+      label: 分析与根因
+      description: 排查过程 / 对话结论 / 可能根因
+      value: |
+        <!-- 待补充 -->
+  - type: textarea
+    id: handling
+    attributes:
+      label: 处置
+      description: 修复方式 / 固件更新 / 使用规范 / 建议
+      value: |
+        <!-- 待补充 -->
+  - type: input
+    id: related
+    attributes:
+      label: 关联
+      description: 测试记录路径、Changelog 版本、关联 Issue
