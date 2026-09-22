@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>好用无人机（FMT）硬件平台 · 项目开发进度报告</title>
+<style>
+:root{
+  /* Product Teal — 页面/报告令牌 */
+  --page-bg:#FFFFFF; --page-surface:#F3F8F6; --page-surface-muted:#E9F0ED;
+  --page-text:#1F2A27; --page-text-secondary:#36443F; --page-text-muted:#5E6E68;
+  --page-text-disabled:#96A59F; --page-border:#D3DEDA; --page-brand:#0E9F6C;
+  --page-brand-hover:#0C885C; --page-brand-active:#0A6F4D; --page-brand-soft:#E7F4EF;
+  --page-brand-soft-strong:#D1E7DD; --page-brand-text:#095C41;
+  /* 反向兼容变量 */
+  --bg:#FFFFFF; --bg2:#F3F8F6; --rule:#D3DEDA; --ink:#1F2A27; --muted:#5E6E68;
+  --text-secondary:#36443F; --text-disabled:#96A59F; --accent:#0E9F6C; --accent-hover:#0C885C;
+  --accent-active:#0A6F4D; --accent-soft:#E7F4EF; --accent2:#228BE6;
+  /* 图表/数据令牌 */
+  --chart-series-1:#0E9F6C; --chart-series-2:#228BE6; --chart-series-3:#7950F2; --chart-series-4:#E64980;
+  --chart-other:#D3DEDA; --chart-accent:#0E9F6C; --chart-accent-2:#228BE6;
+  --chart-positive:#0E9F6C; --chart-warning:#FAAD14; --chart-negative:#FA5252;
+  --chart-grid:rgba(31,42,39,.12); --chart-axis:#5E6E68; --chart-label:#5E6E68; --chart-tooltip-bg:#FFFFFF;
+  /* 语义令牌 */
+  --success:#0E9F6C; --info:#228BE6; --reminder:#FF7A45; --warning:#FAAD14; --danger:#FA5252;
+  --positive:#0E9F6C; --negative:#FA5252;
+  --radius-s:8px; --radius-m:12px;
+  --font-sans:"Segoe UI","PingFang SC","Microsoft YaHei","Noto Sans CJK SC",system-ui,sans-serif;
+  --font-mono:"Cascadia Code","Consolas","SF Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--page-bg);color:var(--page-text);font-family:var(--font-sans);font-size:14px;line-height:20px;letter-spacing:.1px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* 阅读宽度 */
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* Intro */
+.report-intro{background:var(--page-brand-soft);border-bottom:1px solid var(--page-brand-soft-strong)}
+.report-intro__content{padding:56px 0 40px}
+.kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--page-brand);font-weight:600;margin:0 0 12px}
+h1{font-size:34px;line-height:1.15;margin:0 0 16px;letter-spacing:-.01em;color:var(--page-text)}
+.intro-summary{font-size:16px;line-height:26px;color:var(--page-text-secondary);max-width:76ch;margin:0}
+.intro-meta{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:20px;color:var(--page-text-muted);font-size:13px}
+.intro-meta span b{color:var(--page-text)}
+.highlights{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.hl{background:var(--page-surface);border:1px solid var(--page-border);border-radius:var(--radius-s);padding:10px 14px;font-size:13px;color:var(--page-text-secondary)}
+.hl b{color:var(--page-brand);font-weight:600}
+
+/* sections */
+section{padding:44px 0;border-bottom:1px solid var(--page-border)}
+section:last-of-type{border-bottom:none}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:20px}
+.sec-num{font-family:var(--font-mono);color:var(--accent);font-size:13px;font-weight:600}
+h2{font-size:22px;line-height:1.2;margin:0;color:var(--page-text)}
+h3{font-size:16px;margin:28px 0 10px}
+p{margin:8px 0;color:var(--page-text-secondary)}
+.muted{color:var(--page-text-muted)}
+
+/* 指标卡 */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
+.kpi{background:var(--page-surface);border:1px solid var(--page-border);border-radius:var(--radius-m);padding:16px}
+.kpi .v{font-size:26px;font-weight:700;color:var(--page-text);line-height:1.1}
+.kpi .l{font-size:12px;color:var(--page-text-muted);margin-top:6px}
+
+/* 表格 */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px}
+caption{caption-side:top;text-align:left;font-size:12px;color:var(--page-text-muted);padding:0 0 8px;font-weight:600}
+thead th{background:var(--page-surface);color:var(--page-text);font-weight:600;text-align:left;padding:9px 12px;border-bottom:2px solid var(--page-border)}
+tbody td{padding:9px 12px;border-bottom:1px solid var(--page-border);vertical-align:top;color:var(--page-text-secondary)}
+th[scope="row"]{font-weight:600;color:var(--page-text);white-space:nowrap}
+td code{font-family:var(--font-mono);font-size:12.5px;background:var(--page-surface);border:1px solid var(--page-border);border-radius:5px;padding:1px 5px;white-space:nowrap}
+
+/* 标签 */
+.tag{display:inline-block;font-size:12px;font-weight:600;line-height:1;padding:4px 9px;border-radius:999px;white-space:nowrap}
+.t-ok{background:#E6F6EF;color:#0C885C}
+.t-doing{background:#FFF4DF;color:#B7791F}
+.t-wait{background:#E7EDF9;color:#1F63C4}
+.t-warn{background:#FFEDE4;color:#D64E1F}
+.t-risk{background:#FFE9E9;color:#D33}
+.t-note{background:var(--page-surface);color:var(--page-text-muted);border:1px solid var(--page-border)}
+
+/* 列表 */
+ul,ol{margin:8px 0;padding-left:22px;color:var(--page-text-secondary)}
+li{margin:5px 0}
+.chk{list-style:none;padding-left:0}
+.chk li{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--page-border)}
+.chk li:last-child{border-bottom:none}
+.chk .s{font-family:var(--font-mono);color:var(--accent);font-weight:600;min-width:56px}
+
+/* callout */
+.callout{border:1px solid var(--page-border);border-left:3px solid var(--accent);background:var(--page-surface);border-radius:var(--radius-s);padding:14px 16px;margin:16px 0}
+.callout.warn{border-left-color:var(--warning)}
+.callout.risk{border-left-color:var(--danger)}
+.callout .ttl{font-weight:600;margin-bottom:4px}
+
+/* timeline */
+.tl{margin:16px 0;padding:0;list-style:none}
+.tl li{position:relative;padding:0 0 18px 26px;border-left:2px solid var(--page-border)}
+.tl li:before{content:"";position:absolute;left:-7px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--page-bg)}
+.tl .d{font-family:var(--font-mono);font-size:12.5px;color:var(--accent);font-weight:600;margin-bottom:2px}
+.tl .c{color:var(--page-text-secondary)}
+
+footer{padding:40px 0 60px;background:var(--page-surface);border-top:1px solid var(--page-border)}
+footer h2{font-size:16px;margin:0 0 12px}
+.cite-list{font-size:13px;color:var(--page-text-muted);list-style:none;padding:0;margin:10px 0}
+.cite-list li{padding:3px 0}
+
+@media (max-width:760px){
+  .wrap{padding:0 16px}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  h1{font-size:27px}
+  .intro-meta{flex-direction:column;gap:6px}
+  table,.sec-head{font-size:13px}
+}
+@media print{
+  body{font-size:12px}
+  .report-intro__content{padding:32px 0}
+}
+</style>
+</head>
+<body>
+
+<header class="report-intro">
+  <div class="wrap report-intro__content">
+    <p class="kicker">好用无人机 · FMT 飞控 / FMT-SIM 仿真平台</p>
+    <h1>项目开发进度报告</h1>
+    <p class="intro-summary">
+      本项目已完成从 ROS2 多机通讯框架到实物飞行的开发闭环：板载 <strong>offboard</strong> 测试通过、仿真异常注入机制落地、
+      实物飞行问题已初步定位（电机饱和与载荷超限），当前已进入<strong>面向迭代测试的工程化阶段</strong>。
+      下一步核心是验证电机饱和处理固件、补齐 mission 高度与 yaw 能力，并建立可持续记录版本、问题与测试的仓库。
+    </p>
+    <div class="intro-meta">
+      <span>报告期间 <b>2026-05-23 ～ 2026-09-20</b></span>
+      <span>平台 <b>好用无人机（硬件）× FMT-SIM</b></span>
+      <span>文档版本 <b>v1.0</b></span>
+      <span>脱敏 <b>已应用</b></span>
+    </div>
+    <div class="highlights">
+      <div class="hl"><b>06+</b> 周跨越</div>
+      <div class="hl"><b>12+</b> 项记录问题</div>
+      <div class="hl"><b>2</b> 轮实物飞行</div>
+      <div class="hl"><b>1</b> 份专项固件待验证</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section id="overview">
+  <div class="sec-head"><span class="sec-num">01</span><h2>报告概览与本阶段结论</h2></div>
+  <p>本报告依据该硬件平台合作群聊记录整理，覆盖了 2026 年 5 月下旬至今的仿真搭建、实物联调与多轮测试。</p>
+  <div class="kpis">
+    <div class="kpi"><div class="v">3 个</div><div class="l">已闭环功能模块：ROS2 多机组网 / 故障注入 / 板载 offboard</div></div>
+    <div class="kpi"><div class="v">2 项</div><div class="l">固件迭代：电机故障注入、电机饱和处理</div></div>
+    <div class="kpi"><div class="v">2 轮</div><div class="l">实物飞行测试（7 月底遥控/动捕、9 月手动飞行）</div></div>
+    <div class="kpi"><div class="v">4 项</div><div class="l">待办/待验证：电机饱和固件、mission 高度+yaw、云台、轻量化安全绳</div></div>
+  </div>
+  <div class="callout">
+    <div class="ttl">核心判断</div>
+    开发进度健康、方向清晰；当前主要风险集中在<strong>载荷超限导致电机饱和</strong>与<strong>室内无动捕时的定位漂移</strong>两类物理性限制，
+    均已有明确的固件或使用层面的应对，属于可预期、可跟踪的问题。
+  </div>
+</section>
+
+<section id="overview-2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>项目概述</h2></div>
+  <h3>平台与技术栈</h3>
+  <table>
+    <caption>表 1 · 平台与技术构成</caption>
+    <thead><tr><th scope="col">项目</th><th scope="col">说明</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">硬件平台</th><td>好用无人机（四旋翼），机载采用了 NVIDIA Nano 核心板，配套遥控器、GPS/RTK 基站、机载摄像头</td></tr>
+      <tr><th scope="row">飞控</th><td>FMT（Firmament Autopilot）固件，支持 <code>FMS</code> / <code>CONTROL</code> / <code>INS</code> / MCN 消息总线</td></tr>
+      <tr><th scope="row">仿真</th><td>FMT-SIM，支持 SIH（软件在环）与 HIL（硬件在环）；可通过 UE 导入数字孪生地图</td></tr>
+      <tr><th scope="row">机载/上位机</th><td>ROS2，节点程序与 <code>offboard</code> 外部指令控制在板载上运行</td></tr>
+      <tr><th scope="row">地面站</th><td>QGroundControl（QGC）＋ RTK 基站配置</td></tr>
+    </tbody>
+  </table>
+  <h3>开发目标</h3>
+  <ol>
+    <li>打通「FMT-SIM 仿真 → 半实物 → 实机」的一致开发链路；</li>
+    <li>支撑多机自主飞行、mission 航点飞行、异常注入与失效保护验证；</li>
+    <li>面向城市场景的空地/低空作业算法（含建图、目标跟踪）提供可复现的测试载体。</li>
+  </ol>
+</section>
+
+<section id="milestones">
+  <div class="sec-head"><span class="sec-num">03</span><h2>阶段成果与时间线</h2></div>
+  <ul class="tl">
+    <li><div class="d">2026-05-23 ～ 05-25</div><div class="c"><strong>ROS2 多机通讯闭环</strong>：选定「bridge + offboard」组网方案，自定义 ROS2 message，单机控制与多机通讯 Demo 跑通；板载 <strong>offboard</strong> 测试通过；讲解飞控日志记录与数据在环分析（DataSIM）。</div></li>
+    <li><div class="d">2026-07-22 ～ 07-23</div><div class="c"><strong>数字孪生与实机联调</strong>：导入与本地经纬度 1:1 的数字孪生地图，尝试以 UE georeferencing 定位作为 RTK 数据；定位「桨叶缓慢变歪」为 UE 显示层异常而非代码；建立在线问题清单。</div></li>
+    <li><div class="d">2026-07-29</div><div class="c"><strong>实物问题集中暴露</strong>：遥控校准/动捕定位测试中出现遥控起飞漂移、上位机远程失联（无信号、风扇停转）；飞机寄修，最终定位为 <strong>Nano 核心板损坏</strong>，更换核心板后于 08-10 修复。</div></li>
+    <li><div class="d">2026-08-06 ～ 08-11</div><div class="c"><strong>仿真异常注入落地</strong>：明确通信失联（<code>mcn suspend pilot_cmd / gcs_cmd</code>）、电机异常（<code>test</code> 指令 + 1/2/4/8）、电量异常（修改 <code>pmu_poll_battery_status</code>）的实现方法，并合入电机异常代码。</div></li>
+    <li><div class="d">2026-09-09 ～ 09-20</div><div class="c"><strong>实物飞行测试与固件迭代</strong>：三轮手动飞行定位电机饱和问题；发布电机饱和处理固件 <code>fmt_sieon-s1.bin</code>；完成 mission 机制确认与高度判定问题排查。</div></li>
+  </ul>
+</section>
+
+<section id="versions">
+  <div class="sec-head"><span class="sec-num">04</span><h2>版本与固件/参数演进</h2></div>
+  <table>
+    <caption>表 2 · 固件与参数（依据群聊记录整理，需在仓库中持续维护）</caption>
+    <thead><tr><th scope="col">日期</th><th scope="col">对象</th><th scope="col">变更</th><th scope="col">状态</th></tr></thead>
+    <tbody>
+      <tr><td>07-10</td><td>硬件</td><td>Nano 核心板损坏，更换新核心板</td><td><span class="tag t-ok">已解决</span></td></tr>
+      <tr><td>08-11</td><td>固件</td><td>合入电机异常注入代码（故障注入 <code>test</code> 指令）</td><td><span class="tag t-ok">已合入</span></td></tr>
+      <tr><td>09-14</td><td>参数</td><td><code>param.xml</code> 采集于实机（备份 v1）</td><td><span class="tag t-note">存档</span></td></tr>
+      <tr><td>09-15</td><td>固件+参数</td><td><code>fmt_sieon-s1.bin</code> 电机饱和处理固件；<code>param.xml</code> v2；注意 <code>FMS</code>/<code>CONTROL</code> 参数改名</td><td><span class="tag t-wait">待验证</span></td></tr>
+      <tr><td>进行中</td><td>功能</td><td>邹老师计划支持 mission 高度判达 + <code>yaw</code> 设置</td><td><span class="tag t-doing">进行中</span></td></tr>
+    </tbody>
+  </table>
+  <p class="muted">待办：正式版本号（如 v0.x）与 changelog 需在仓库中规范化登记，后续每次固件/参数发布均补充记录。</p>
+</section>
+
+<section id="tests">
+  <div class="sec-head"><span class="sec-num">05</span><h2>测试记录汇总</h2></div>
+  <table>
+    <caption>表 3 · 主要测试事件</caption>
+    <thead><tr><th scope="col">时间</th><th scope="col">测试项</th><th scope="col">结果 / 问题</th></tr></thead>
+    <tbody>
+      <tr><td>05-25</td><td>板载 offboard 测试</td><td>通过；结论可支持后续多机（<span class="tag t-ok">通过</span>）</td></tr>
+      <tr><td>07-29</td><td>遥控校准 + 动捕定位</td><td>室内无动捕时遥控起飞出现漂移；上位机远程失联（风扇停转、无信号）</td></tr>
+      <tr><td>09-09</td><td>实物手动飞行 ×3</td><td>第 1 次（系安全绳）俯仰+大油门姿态失衡翻转 180°；第 2 次（胶带+安全绳）小油门失衡；第 3 次（空载）稳定。<strong>归因：电机饱和、载荷超限</strong></td></tr>
+      <tr><td>09-16</td><td>定点/定速/定偏航</td><td>offboard 给定高度 3m 实测 5-6m；定高模式油门漂移严重；遥控切模式响应偏长</td></tr>
+      <tr><td>09-20</td><td>重复起飞降落</td><td>降落高度累计误差（0.2m→2m+）——GPS 非对地高度，属正常现象</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="issues">
+  <div class="sec-head"><span class="sec-num">06</span><h2>问题清单与状态</h2></div>
+  <table>
+    <caption>表 4 · 问题跟踪（建议以 GitHub Issues 逐一建档，按状态流转）</caption>
+    <thead><tr><th scope="col">#</th><th scope="col">问题</th><th scope="col">根因 / 处置</th><th scope="col">状态</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>上位机远程失联、Nano 核心板损坏</td><td>更换核心板</td><td><span class="tag t-ok">已解决</span></td></tr>
+      <tr><td>2</td><td>桨叶卡死、摄像头螺丝脱落</td><td>人工拆装、补充紧固</td><td><span class="tag t-ok">已解决</span></td></tr>
+      <tr><td>3</td><td>上位机固定柱断裂（摔机）</td><td>寄送机架座子更换</td><td><span class="tag t-ok">已解决</span></td></tr>
+      <tr><td>4</td><td>电机异常/电量异常注入</td><td>固件提供 <code>test</code> 故障注入</td><td><span class="tag t-ok">已解决</span></td></tr>
+      <tr><td>5</td><td>金属桨场景变歪</td><td>UE 显示层异常，非飞控代码</td><td><span class="tag t-note">定位</span></td></tr>
+      <tr><td>6</td><td>姿态失衡、电机饱和</td><td>控制算法已更新并发布专用固件</td><td><span class="tag t-wait">待验证</span></td></tr>
+      <tr><td>7</td><td>mission 高度判达只认 XY、不支持 yaw</td><td>厂商计划支持（原地爬升/固定朝向）</td><td><span class="tag t-doing">进行中</span></td></tr>
+      <tr><td>8</td><td>机载链路 mission 上传</td><td>需在 <code>mavobc.c</code> 的 <code>handle_mavlink_message</code> 追加实现</td><td><span class="tag t-doing">进行中</span></td></tr>
+      <tr><td>9</td><td>SIH 高速飞行不稳定</td><td>仿真建模参数待查（仿真实机可达 15m/s）</td><td><span class="tag t-doing">排查中</span></td></tr>
+      <tr><td>10</td><td>摄像头云台</td><td>厂商不提供，拟采购 SIYI 轻量云台</td><td><span class="tag t-doing">已定方案</span></td></tr>
+      <tr><td>11</td><td>RTK/GPS 高度≠对地绝对高度</td><td>需激光/雷达或起飞点高度换算；降落累计误差正常</td><td><span class="tag t-note">认知确认</span></td></tr>
+      <tr><td>12</td><td>真机低电量/电机异常不处理</td><td>当前仅处理信号链路/传感器/导航异常</td><td><span class="tag t-warn">需评估</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="risks">
+  <div class="sec-head"><span class="sec-num">07</span><h2>风险与注意事项</h2></div>
+  <div class="callout risk">
+    <div class="ttl">载荷超限 / 电机饱和</div>
+    飞行测试系安全绳（约 2.2kg）明显超载，导致控制余量不足。建议改用轻量风筝线 + 卡扣方案，并在负载变更前评估载荷上限。
+  </div>
+  <div class="callout risk">
+    <div class="ttl">室内定位漂移</div>
+    无动捕/RTK 时仅靠 IMU + 水平仪定位，定高模式不控位置，起飞易飘。建议室内环境先建立稳定定位源，或先做水平校准。
+  </div>
+  <div class="callout warn">
+    <div class="ttl">固件参数名变更</div>
+    电机饱和固件改动了 <code>FMS</code>/<code>CONTROL</code> 参数名，若在飞控外部设置参数需同步改名，否则配置失效。
+  </div>
+  <div class="callout warn">
+    <div class="ttl">资料与安全</div>
+    内部培训视频、问题清单与测试物料属于项目内部资料，仓库公开后应避免上传任何内部文档、地址与身份信息。
+  </div>
+</section>
+
+<section id="next">
+  <div class="sec-head"><span class="sec-num">08</span><h2>下一步计划（Roadmap）</h2></div>
+  <ul class="chk">
+    <li><span class="s">P0</span><span><strong>验证电机饱和固件</strong>：刷入 <code>fmt_sieon-s1.bin</code> 并按新参数配置重测姿态失衡场景（空载 + 轻载）</span></li>
+    <li><span class="s">P0</span><span><strong>建立可持续记录</strong>：按本仓库模板沉淀版本 / 问题 / 测试，每次飞行与固件变更留档</span></li>
+    <li><span class="s">P1</span><span><strong>offboard 与系统稳定性</strong>：继续测 speed 控制、模式切换与失效保护</span></li>
+    <li><span class="s">P1</span><span><strong>mission 能力跟进</strong>：待厂商更新后验证高度判达 + yaw，完成机载 mission 上传</span></li>
+    <li><span class="s">P1</span><span><strong>载荷/云台</strong>：采购轻量云台并评估重心影响；完成轻量化安全绳方案</span></li>
+    <li><span class="s">P2</span><span><strong>长沙实地联测</strong>：按计划到厂商场地开展功能性与极限性能测试</span></li>
+  </ul>
+</section>
+
+<section id="appendix">
+  <div class="sec-head"><span class="sec-num">09</span><h2>附录 · 关键技术速查</h2></div>
+  <table>
+    <caption>表 5 · 常用指令与参数</caption>
+    <thead><tr><th scope="col">主题</th><th scope="col">要点</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">通信失联注入</th><td><code>mcn suspend pilot_cmd</code> / <code>mcn suspend gcs_cmd</code> 阻断遥控与机载信号</td></tr>
+      <tr><th scope="row">电机异常注入</th><td><code>test</code> 指令 + 序号（1/2/4/8 ↔ 1～4 号电机）</td></tr>
+      <tr><th scope="row">电量异常注入</th><td>修改 <code>pmu_poll_battery_status</code> 上报的电量信息；HIL 下可接真电池读取</td></tr>
+      <tr><th scope="row">日志</th><td>参数 <code>MLOG_MODE</code>（0 关 / 1 解锁记 / 2 开机记止停 / 3 开机记）；<code>mlog status|stop</code>；日志在 <code>.bin</code> 中导出，DataSIM 作图</td></tr>
+      <tr><th scope="row">电量读取</th><td>地面站查看或控制台 <code>mcn echo bat_status</code>；导航 yaw 见 <code>ins_output.psi</code></td></tr>
+      <tr><th scope="row">mission</th><td>仅地面站链路上传；参考 MAVLink mission protocol；<code>/sys/mission.txt</code> 存航点</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <h2>数据来源与说明</h2>
+    <ul class="cite-list">
+      <li>本报告基于项目合作群聊记录整理（2026-05-23 ～ 2026-09-20，共 4 段文本：<code>1.txt</code> ～ <code>4.txt</code>）。属于用户提供的内部资料，无公开 URL。</li>
+      <li>全部个人身份信息（姓名以外的手机号、地址）已按要求做脱敏处理，不出现于本报告。</li>
+      <li>版本号、时间线与参数细节以仓库内的 <code>CHANGELOG.md</code>、问题记录与测试记录为准持续更新。</li>
+    </ul>
+    <p class="muted" style="margin-top:12px">好用无人机（FMT）硬件平台 · 开发进度报告 v1.0 · 编制日期 2026-09-22</p>
+  </div>
+</footer>
+
+</body>
+</html>

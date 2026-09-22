@@ -1,0 +1,37 @@
+# ---- OS / 编辑器 ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*.local
+
+# ---- Python / 工具 ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# ---- 构建产物 ----
+build/
+dist/
+*.o
+*.elf
+
+# ---- 日志与临时 ----
+*.log
+*.tmp
+*.dmp
+core.*
+
+# ---- 微信/内部导出的二进制与附件（避免泄密 + 体积）----
+*.mp4
+*.dat
+微信图片_*
+微信视频_*
+*.bin
+
+# ---- 本地运行/回放产物 ----
+logs/raw/**
+
+# 说明：若确需把某个 .bin（如电机饱和固件 fmt_sieon-s1.bin）纳入版本管理，
+# 请显式 `git add -f` 并在 firmware/ 中登记用途与来源。
